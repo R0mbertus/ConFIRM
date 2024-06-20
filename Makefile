@@ -1,5 +1,23 @@
 CXX=clang++
-CFLAGS=-g
+CFLAGS=-g -fsanitize=shadow-call-stack
+
+# CXX=clang++
+# CFLAGS=-g -flto -fvisibility=default -fsanitize=shadow-call-stack,cfi
+
+# CXX=clang++-17
+# CFLAGS=-g -fsanitize=shadow-call-stack,kcfi
+
+# CXX=g++
+# CFLAGS=-g -fcf-protection=full
+
+# CXX=clang++
+# CFLAGS=-g -fsanitize=shadow-call-stack -O0 -fpass-plugin=../../policies/custom/build/lib/libControlFlowIntegrity.so
+
+# CXX=clang++
+# CFLAGS=-g -fsanitize=shadow-call-stack -O0 -fpass-plugin=../../policies/custom/build/lib/libOpaqueControlFlowIntegrity.so
+
+# CXX=/root/MCFI/toolchain/bin/clang++
+# CFLAGS=-g
 
 CPP_FILES_ALL := $(wildcard src/*.cpp)
 CPP_FILES := $(filter-out src/setup.cpp, $(CPP_FILES_ALL))
@@ -9,16 +27,19 @@ SETUP_H := src/setup.h
 SETUP_O := build/setup.o
 
 # Default target
-all: build compile run
+all: build setup compile run
 
 build:
 	@mkdir -p build/src
 
+setup: $(SETUP_O)
+
+
 $(SETUP_O): $(SETUP_CPP) $(SETUP_H)
-	@echo ${EXECUTABLES}
+	@echo "Compiling $<..."
 	@${CXX} ${CFLAGS} -c $(SETUP_CPP) -o $@
 
-compile: $(SETUP_O) $(EXECUTABLES)
+compile: $(EXECUTABLES)
 
 build/%: %.cpp
 	@echo "Compiling $<..."
@@ -28,7 +49,7 @@ run: $(EXECUTABLES)
 	@for exe in $(EXECUTABLES); do \
 		echo "Running $$exe..."; \
 		./$$exe; \
-		echo -e "\n"; \
+		echo "\n"; \
 	done
 
 clean:
