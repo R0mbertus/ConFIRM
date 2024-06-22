@@ -1,5 +1,5 @@
 CXX=clang++
-CFLAGS=-g -fsanitize=shadow-call-stack
+CFLAGS=-g
 
 # CXX=clang++
 # CFLAGS=-g -flto -fvisibility=default -fsanitize=shadow-call-stack,cfi
@@ -18,6 +18,9 @@ CFLAGS=-g -fsanitize=shadow-call-stack
 
 # CXX=/root/MCFI/toolchain/bin/clang++
 # CFLAGS=-g
+
+# CXX=/root/MCFI/toolchain/bin/clang++
+# CFLAGS=-g -Xclang -mdisable-picfi
 
 CPP_FILES_ALL := $(wildcard src/*.cpp)
 CPP_FILES := $(filter-out src/setup.cpp, $(CPP_FILES_ALL))
